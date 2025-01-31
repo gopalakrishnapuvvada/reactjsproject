@@ -1,0 +1,72 @@
+2. Install Node.js
+Now write the command in your terminal, after updating the package list.
+Command: sudo apt install nodejs
+
+
+
+
+3. Installation verification
+You should see the version of Node.js installed on your system.
+Command: node -v
+
+
+Install npm
+If npm is not installed with Node.js, install it manually.
+Command: sudo apt install npm
+
+
+
+ Installation verification
+You should see the version of npm installed on your system.
+Command: npm -v
+
+
+
+Step 3: Install ReactJS using Create React App
+Create React App is a tool that allows you to set up a React project with a single command. It sets up a modern web development environment with a good default configuration.
+
+1. Create a new React applications
+This command will create a folder called my-app with all the files and configurations required for a React project
+Command: npx create react-app my-app
+
+2. Navigate to Your Desired Directory for the React Application
+Once the installation is complete, navigate into the newly created project folder.
+Command: cd my-app
+
+
+
+
+
+
+
+
+npm start
+
+
+
+npx create-react-app my-app
+
+
+https://www.youtube.com/watch?v=k3KqQvywToE&list=PLu71SKxNbfoDqgPchmvIsL4hTnJIrtige&index=3
+
+
+
+
+git commit -m "Initial commit"
+
+
+git commit -m "Initial commit"
+
+
+git push -u origin main
+
+
+. Future Changes
+Any future changes you make locally can be pushed to GitHub by:
+
+git add . (to stage changes)
+git commit -m "Your message" (to commit changes)
+git push (to push changes to GitHub)
+
+
+
