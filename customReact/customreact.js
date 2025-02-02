@@ -1,4 +1,4 @@
-function mainContainer(reactElement, container){
+function customRender(reactElement, container){
     /* document.createElement(reactElement.type)
     domElement.innerHTML = reactElement.childen
     domElement.setAttribute('href',reactElement.props.href)
@@ -9,6 +9,7 @@ function mainContainer(reactElement, container){
     domElement.innerHTML = reactElement.childen
     
     for (const prop in reactElement.prop) {
+        if (prop === 'chiden') continue
         domElement.setAttribute(prop, reactElement.props)
     }
     container.appendchild(domElement)
