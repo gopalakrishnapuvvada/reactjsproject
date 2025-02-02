@@ -1,26 +1,20 @@
 import React, { useState } from 'react';
 import './App.css';
-import { Line } from 'react-chartjs-2';
-import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend } from 'chart.js';
-
-// Register Chart.js components
-ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
 function App() {
   // States for the number of students (rows) and subjects (columns)
   const [rows, setRows] = useState(3);
   const [cols, setCols] = useState(3);
-
-  // State to store student names and subject names
+  
+  // State to store student names
   const [students, setStudents] = useState(Array(rows).fill("").map(() => Array(cols).fill("")));
   const [subjects, setSubjects] = useState(Array(cols).fill(""));
-
-  // State for selected subject for the graph
-  const [selectedSubject, setSelectedSubject] = useState(0);
 
   // Handle row changes (students)
   const handleRowChange = (e) => {
     const newRows = Number(e.target.value);
+
+    // Preserve existing student data and add new rows if needed
     const updatedStudents = [...students];
 
     // If we're adding rows, push new empty rows
@@ -29,6 +23,7 @@ function App() {
         updatedStudents.push(Array(cols).fill(""));  // Add new student row with empty data
       }
     } else if (newRows < rows) {
+      // If we're removing rows, slice off excess rows
       updatedStudents.length = newRows;
     }
 
@@ -39,10 +34,14 @@ function App() {
   // Handle column changes (subjects)
   const handleColChange = (e) => {
     const newCols = Number(e.target.value);
+
+    // Preserve existing student data and adjust the number of columns
     const updatedStudents = students.map(row => {
       if (newCols > cols) {
+        // If we are adding columns, add new empty columns
         return [...row, ...Array(newCols - cols).fill("")];
       } else {
+        // If we are removing columns, slice off excess columns
         return row.slice(0, newCols);
       }
     });
@@ -58,39 +57,10 @@ function App() {
     setStudents(updatedStudents);
   };
 
-  // Handle subject name input
-  const handleSubjectNameChange = (e, colIndex) => {
-    const updatedSubjects = [...subjects];
-    updatedSubjects[colIndex] = e.target.value;
-    setSubjects(updatedSubjects);
-  };
-
-  // Handle selecting subject for the graph
-  const handleSubjectChange = (e) => {
-    setSelectedSubject(Number(e.target.value));
-  };
-
-  // Generate chart data for the selected subject
-  const chartData = {
-    labels: students.map((_, index) => `Student ${index + 1}`), // Labels: student names
-    datasets: [
-      {
-        label: `Scores for ${subjects[selectedSubject] || `Subject ${selectedSubject + 1}`}`,
-        data: students.map((_, rowIndex) => rowIndex + selectedSubject + 2), // Calculate rowIndex + selectedSubject + 2
-        borderColor: 'rgba(75, 192, 192, 1)', // Line color
-        backgroundColor: 'rgba(75, 192, 192, 0.2)', // Fill color
-        tension: 0.1, // Line smoothness
-      },
-    ],
-  };
-
-  // Button click to generate the graph
-  const generateGraph = () => {
-    if (subjects[selectedSubject]) {
-      return <Line data={chartData} />;
-    } else {
-      alert("Please select a subject first!");
-    }
+  // Calculate the total score for each student (sum of all subjects)
+  const calculateTotal = (rowIndex) => {
+    return Array.from({ length: cols }, (_, colIndex) => rowIndex + colIndex + 2)  // +2 for 1-based indexing
+                .reduce((acc, curr) => acc + curr, 0);
   };
 
   return (
@@ -129,7 +99,11 @@ function App() {
                     type="text"
                     value={subjects[colIndex]}
                     placeholder={`Subject ${colIndex + 1}`}
-                    onChange={(e) => handleSubjectNameChange(e, colIndex)}
+                    onChange={(e) => {
+                      const updatedSubjects = [...subjects];
+                      updatedSubjects[colIndex] = e.target.value;
+                      setSubjects(updatedSubjects);
+                    }}
                   />
                 </th>
               ))}
@@ -151,37 +125,16 @@ function App() {
                 {/* Dynamic table cells for each subject */}
                 {[...Array(cols)].map((_, colIndex) => (
                   <td key={colIndex}>
-                    {rowIndex + colIndex + 2} {/* Score: rowIndex + colIndex + 2 */}
+                    {/* Calculating score as rowIndex + colIndex + 2 */}
+                    {rowIndex + colIndex + 2} {/* Add 2 for 1-based indexing */}
                   </td>
                 ))}
                 {/* Display the total score */}
-                <td>{students[rowIndex].reduce((acc, curr, index) => acc + (index + 1) + (rowIndex + 1), 0)}</td>
+                <td>{calculateTotal(rowIndex)}</td> {/* Show the total score */}
               </tr>
             ))}
           </tbody>
         </table>
-
-        {/* Dropdown to select a subject for the graph */}
-        <div>
-          <label>Select Subject for Graph: </label>
-          <select onChange={handleSubjectChange} value={selectedSubject}>
-            {subjects.map((subject, index) => (
-              <option key={index} value={index}>
-                {subject || `Subject ${index + 1}`}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        {/* Button to generate graph */}
-        <div>
-          <button onClick={generateGraph}>Generate Graph</button>
-        </div>
-
-        {/* Display graph */}
-        <div>
-          {generateGraph()}
-        </div>
       </header>
     </div>
   );
